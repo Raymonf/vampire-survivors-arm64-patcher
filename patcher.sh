@@ -48,6 +48,10 @@ blue_echo() {
 	echo -e "\033[1;34m$1\033[0m"
 }
 
+check_sha256() {
+    shasum -a 256 -c <<<"$2  $1"
+}
+
 # in case it's installed to somewhere else
 ensure_app_dir() {
 	while [ ! -d "$APP_DIR" ]; do
@@ -105,7 +109,7 @@ install_electron() {
 install_greenworks() {
 	blue_echo "Setting up Steam libraries..."
 	curl -LO "$GREENWORKS_URL" -o "$GREENWORKS_FILE_NAME"
-	if [[ $(shasum -a 256 "$GREENWORKS_FILE_NAME" | cut -f1 -d' ') != "$GREENWORKS_SHA256_HASH" ]]; then
+	if ! check_sha256 "$GREENWORKS_FILE_NAME" "$GREENWORKS_SHA256_HASH"; then
 		red_echo " ! Downloaded file '$GREENWORKS_FILE_NAME' did not match the expected hash"; exit 1
 	fi
 	cp "$GREENWORKS_FILE_NAME" "$APP_DIR/$NATIVE_MODULE_DIR/greenworks-osxarm64.node"
@@ -121,12 +125,7 @@ install_libsteam() {
 	LIBSTEAM_BASE_DIR="VS_libsteam"
 	LIBSTEAM_ARM64_PATH="$LIBSTEAM_BASE_DIR/libsteam_api.dylib"
 	LIBAPPTICKET_ARM64_PATH="$LIBSTEAM_BASE_DIR/libsdkencryptedappticket.dylib"
-	if [[ ! -d "$LIBSTEAM_BASE_DIR" ||
-		! -f "$LIBSTEAM_ARM64_PATH" ||
-		! -f "$LIBAPPTICKET_ARM64_PATH" ||
-		$(shasum -a 256 "$LIBSTEAM_ARM64_PATH" | cut -f1 -d' ') != "$LIBSTEAM_SHA256_HASH" ||
-		$(shasum -a 256 "$LIBAPPTICKET_ARM64_PATH" | cut -f1 -d' ') != "$LIBAPPTICKET_SHA256_HASH"
-	]]; then
+	if [ ! -d "$LIBSTEAM_BASE_DIR" || ! -f "$LIBSTEAM_ARM64_PATH" || ! -f "$LIBAPPTICKET_ARM64_PATH" || ! check_sha256 "$LIBSTEAM_ARM64_PATH" "$LIBSTEAM_SHA256_HASH" || ! check_sha256 "$LIBAPPTICKET_ARM64_PATH" "$LIBAPPTICKET_SHA256_HASH" ]; then
 		yellow_echo " * Downloading Steam libraries..."
 		mkdir -p "$LIBSTEAM_BASE_DIR"
 		curl -L -o "$LIBSTEAM_BASE_DIR/$LIBSTEAM_ZIP_NAME" "$LIBSTEAM_ZIP_URL"
@@ -134,9 +133,7 @@ install_libsteam() {
 		rm "$LIBSTEAM_BASE_DIR/$LIBSTEAM_ZIP_NAME"
 	fi
 
-	if [[ $(shasum -a 256 "$LIBSTEAM_ARM64_PATH" | cut -f1 -d' ') != "$LIBSTEAM_SHA256_HASH" ||
-		$(shasum -a 256 "$LIBAPPTICKET_ARM64_PATH" | cut -f1 -d' ') != "$LIBAPPTICKET_SHA256_HASH"
-	]]; then
+	if ! check_sha256 "$LIBSTEAM_ARM64_PATH" "$LIBSTEAM_SHA256_HASH" || ! check_sha256 "$LIBAPPTICKET_ARM64_PATH" "$LIBAPPTICKET_SHA256_HASH"; then
 		red_echo " ! Extracted Steam libraries did not match the expected hashes"; exit 1
 	fi
 
@@ -180,10 +177,7 @@ magic() {
 		install_greenworks
 	fi
 
-	if [[ "$FORCE_REINSTALL_LIBSTEAM" = true ||
-		! $(file -b "$APP_DIR/$NATIVE_MODULE_DIR/libsteam_api.dylib") =~ "arm64" ||
-		! $(file -b "$APP_DIR/$NATIVE_MODULE_DIR/libsdkencryptedappticket.dylib") =~ "arm64"
-	]]; then
+	if [[ "$FORCE_REINSTALL_LIBSTEAM" = true || ! $(file -b "$APP_DIR/$NATIVE_MODULE_DIR/libsteam_api.dylib") =~ "arm64" || ! $(file -b "$APP_DIR/$NATIVE_MODULE_DIR/libsdkencryptedappticket.dylib") =~ "arm64" ]]; then
 		install_libsteam
 	fi
 
