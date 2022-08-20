@@ -12,7 +12,7 @@ FORCE_REINSTALL_LIBSTEAM=false
 ELECTRON_VERSION="v19.0.13" # you probably don't want to change this from v19.x if you don't know what you're doing!
 ELECTRON_TYPE="electron-$ELECTRON_VERSION-darwin-arm64"
 APP_DIR="$HOME/Library/Application Support/Steam/steamapps/common/Vampire Survivors/Vampire_Survivors.app"
-CLEANUP=false
+CLEANUP=true
 RESIGN_ENTIRE_GAME=false
 
 ##############
