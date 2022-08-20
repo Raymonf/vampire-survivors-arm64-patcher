@@ -156,7 +156,7 @@ patch_game() {
 	blue_echo "Patching game to detect and use arm64 Greenworks..."
 	# ugly hack ugly hack ugly hack ugly hack ugly hack ugly hack
 	sed -i '' "s/','x64',/','arm64',/g" "$APP_DIR/Contents/Resources/app/.webpack/main/index.js"
-	sed -i '' 's/greenworks-osx64\.node/greenworks-\osxarm64.node/g' "$APP_DIR/Contents/Resources/app/.webpack/main/index.js"
+	sed -i '' 's/greenworks-osx64\.node/greenworks-osxarm64\.node/g' "$APP_DIR/Contents/Resources/app/.webpack/main/index.js"
 }
 
 resign_game() {
