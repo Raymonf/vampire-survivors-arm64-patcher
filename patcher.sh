@@ -75,7 +75,7 @@ install_electron() {
 	if [ ! -f "$ELECTRON_ZIPNAME" ]; then
 		ELECTRON_URL="https://github.com/electron/electron/releases/download/$ELECTRON_VERSION/electron-$ELECTRON_VERSION-darwin-arm64.zip"
 		yellow_echo " * Downloading '$ELECTRON_ZIPNAME'..."
-		curl -LO "$ELECTRON_URL" -o "$ELECTRON_ZIPNAME"
+		curl -L "$ELECTRON_URL" -o "$ELECTRON_ZIPNAME"
 	fi
 
 	# extract the electron zip if it's not already in its own folder
@@ -108,7 +108,7 @@ install_electron() {
 
 install_greenworks() {
 	blue_echo "Setting up Steam libraries..."
-	curl -LO "$GREENWORKS_URL" -o "$GREENWORKS_FILE_NAME"
+	curl -L "$GREENWORKS_URL" -o "$GREENWORKS_FILE_NAME"
 	if ! check_sha256 "$GREENWORKS_FILE_NAME" "$GREENWORKS_SHA256_HASH"; then
 		red_echo " ! Downloaded file '$GREENWORKS_FILE_NAME' did not match the expected hash"; exit 1
 	fi
@@ -125,7 +125,7 @@ install_libsteam() {
 	LIBSTEAM_BASE_DIR="VS_libsteam"
 	LIBSTEAM_ARM64_PATH="$LIBSTEAM_BASE_DIR/libsteam_api.dylib"
 	LIBAPPTICKET_ARM64_PATH="$LIBSTEAM_BASE_DIR/libsdkencryptedappticket.dylib"
-	if [ ! -d "$LIBSTEAM_BASE_DIR" || ! -f "$LIBSTEAM_ARM64_PATH" || ! -f "$LIBAPPTICKET_ARM64_PATH" || ! check_sha256 "$LIBSTEAM_ARM64_PATH" "$LIBSTEAM_SHA256_HASH" || ! check_sha256 "$LIBAPPTICKET_ARM64_PATH" "$LIBAPPTICKET_SHA256_HASH" ]; then
+	if [[ ! -d "$LIBSTEAM_BASE_DIR" || ! -f "$LIBSTEAM_ARM64_PATH" || ! -f "$LIBAPPTICKET_ARM64_PATH" || ! check_sha256 "$LIBSTEAM_ARM64_PATH" "$LIBSTEAM_SHA256_HASH" || ! check_sha256 "$LIBAPPTICKET_ARM64_PATH" "$LIBAPPTICKET_SHA256_HASH" ]]; then
 		yellow_echo " * Downloading Steam libraries..."
 		mkdir -p "$LIBSTEAM_BASE_DIR"
 		curl -L -o "$LIBSTEAM_BASE_DIR/$LIBSTEAM_ZIP_NAME" "$LIBSTEAM_ZIP_URL"
