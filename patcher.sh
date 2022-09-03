@@ -55,7 +55,7 @@ check_sha256() {
 # in case it's installed to somewhere else
 ensure_app_dir() {
 	while [ ! -d "$APP_DIR" ]; do
-		read -p "Game couldn't be found. Drag the app here and press [Enter]: " APP_DIR
+		read -r -p "Game couldn't be found. Drag the app here and press [Enter]: " APP_DIR
 	done
 
 	if [ ! -f "$APP_DIR/$BINARY_DIR" ]; then
@@ -125,7 +125,7 @@ install_libsteam() {
 	LIBSTEAM_BASE_DIR="VS_libsteam"
 	LIBSTEAM_ARM64_PATH="$LIBSTEAM_BASE_DIR/libsteam_api.dylib"
 	LIBAPPTICKET_ARM64_PATH="$LIBSTEAM_BASE_DIR/libsdkencryptedappticket.dylib"
-	if [[ ! -d "$LIBSTEAM_BASE_DIR" || ! -f "$LIBSTEAM_ARM64_PATH" || ! -f "$LIBAPPTICKET_ARM64_PATH" || ! check_sha256 "$LIBSTEAM_ARM64_PATH" "$LIBSTEAM_SHA256_HASH" || ! check_sha256 "$LIBAPPTICKET_ARM64_PATH" "$LIBAPPTICKET_SHA256_HASH" ]]; then
+	if [[ ! -d "$LIBSTEAM_BASE_DIR" || ! -f "$LIBSTEAM_ARM64_PATH" || ! -f "$LIBAPPTICKET_ARM64_PATH" ]] || ! check_sha256 "$LIBSTEAM_ARM64_PATH" "$LIBSTEAM_SHA256_HASH" || ! check_sha256 "$LIBAPPTICKET_ARM64_PATH" "$LIBAPPTICKET_SHA256_HASH"; then
 		yellow_echo " * Downloading Steam libraries..."
 		mkdir -p "$LIBSTEAM_BASE_DIR"
 		curl -L -o "$LIBSTEAM_BASE_DIR/$LIBSTEAM_ZIP_NAME" "$LIBSTEAM_ZIP_URL"
