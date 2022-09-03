@@ -2,6 +2,8 @@
 
 This not-very-pretty bash script takes care of patching Vampire Survivors to work natively on arm64 (i.e., Apple silicon) Macs. If you're a bash wizard, please feel free to improve the script.
 
+**Verified working with v0.11.211.**
+
 ### Why?
 
 The FPS is too good under Rosetta 2 once you hit mid-round. I guess better power efficiency is a good reason too.
